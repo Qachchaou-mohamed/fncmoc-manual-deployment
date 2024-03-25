@@ -1130,6 +1130,26 @@ sed -i \
 fncmOperator/files/deploy/crs/container-samples/scripts/\
 prerequisites/propertyFile/fncm_db_server.toml
 ```
+```bash
+# Update generated file with real values
+sed -i \
+-e 's/DATABASE_SERVERNAME = "<Required>"/'\
+'DATABASE_SERVERNAME = "postgresql.fncm-postgresql.svc.cluster.local"/g' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devgcd"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devgcd"""/' \
+-e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devos2"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devos2"""/' \
+-e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devicn"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devicn"""/' \
+-e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
+-e '0,/TABLESPACE_NAME = "ICNDB"/s//TABLESPACE_NAME = "devicn_tbs"/' \
+-e '0,/SCHEMA_NAME = "ICNDB"/s//SCHEMA_NAME = "devicn"/' \
+/usr/install/fncm/ibm-cp-fncm-case/inventory/\
+fncmOperator/files/deploy/crs/container-samples/scripts/\
+prerequisites/propertyFile/fncm_db_server.toml
+```
 
 Update values for fncm_deployment.toml
 
@@ -1285,6 +1305,12 @@ oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
 # FNCM OS
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
 'mkdir /pgsqldata/devos1; chown postgres:postgres /pgsqldata/devos1;'
+oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
+'psql postgresql://cpadmin@localhost:5432/postgresdb \
+--file=/usr/dbscript/createos.sql'
+
+oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
+'mkdir /pgsqldata/devos2; chown postgres:postgres /pgsqldata/devos2;'
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
 'psql postgresql://cpadmin@localhost:5432/postgresdb \
 --file=/usr/dbscript/createos.sql'
