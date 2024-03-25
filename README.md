@@ -1115,17 +1115,17 @@ prerequisites/propertyFile/fncm_db_server.toml.bak
 sed -i \
 -e 's/DATABASE_SERVERNAME = "<Required>"/'\
 'DATABASE_SERVERNAME = "postgresql.fncm-postgresql.svc.cluster.local"/g' \
--e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devgcd"/' \
--e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devgcd"""/' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devgcd1"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devgcd1"""/' \
 -e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
 -e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devos1"/' \
 -e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devos1"""/' \
 -e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
--e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devicn"/' \
--e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devicn"""/' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devicn1"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devicn1"""/' \
 -e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
 -e '0,/TABLESPACE_NAME = "ICNDB"/s//TABLESPACE_NAME = "devicn_tbs"/' \
--e '0,/SCHEMA_NAME = "ICNDB"/s//SCHEMA_NAME = "devicn"/' \
+-e '0,/SCHEMA_NAME = "ICNDB"/s//SCHEMA_NAME = "devicn1"/' \
 /usr/install/fncm/ibm-cp-fncm-case/inventory/\
 fncmOperator/files/deploy/crs/container-samples/scripts/\
 prerequisites/propertyFile/fncm_db_server.toml
@@ -1135,17 +1135,17 @@ prerequisites/propertyFile/fncm_db_server.toml
 sed -i \
 -e 's/DATABASE_SERVERNAME = "<Required>"/'\
 'DATABASE_SERVERNAME = "postgresql.fncm-postgresql.svc.cluster.local"/g' \
--e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devgcd"/' \
--e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devgcd"""/' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devgcd2"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devgcd2"""/' \
 -e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
 -e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devos2"/' \
 -e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devos2"""/' \
 -e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
--e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devicn"/' \
--e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devicn"""/' \
+-e '0,/DATABASE_NAME = "<Required>"/s//DATABASE_NAME = "devicn2"/' \
+-e '0,/DATABASE_USERNAME = """<Required>"""/s//DATABASE_USERNAME = """devicn2"""/' \
 -e '0,/DATABASE_PASSWORD = """<Required>"""/s//DATABASE_PASSWORD = """Password"""/' \
 -e '0,/TABLESPACE_NAME = "ICNDB"/s//TABLESPACE_NAME = "devicn_tbs"/' \
--e '0,/SCHEMA_NAME = "ICNDB"/s//SCHEMA_NAME = "devicn"/' \
+-e '0,/SCHEMA_NAME = "ICNDB"/s//SCHEMA_NAME = "devicn2"/' \
 /usr/install/fncm/ibm-cp-fncm-case/inventory/\
 fncmOperator/files/deploy/crs/container-samples/scripts/\
 prerequisites/propertyFile/fncm_db_server.toml
@@ -1297,10 +1297,17 @@ Execute create scripts with table space directory creation
 ```bash
 # Navigator
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
-'mkdir /pgsqldata/devicn; chown postgres:postgres /pgsqldata/devicn;'
+'mkdir /pgsqldata/devicn; chown postgres:postgres /pgsqldata/devicn1;'
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
 'psql postgresql://cpadmin@localhost:5432/postgresdb \
 --file=/usr/dbscript/createICN.sql'
+
+oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
+'mkdir /pgsqldata/devicn; chown postgres:postgres /pgsqldata/devicn2;'
+oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
+'psql postgresql://cpadmin@localhost:5432/postgresdb \
+--file=/usr/dbscript/createICN.sql'
+
 
 # FNCM OS
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
@@ -1317,7 +1324,13 @@ oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
 
 # FNCM GCD
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
-'mkdir /pgsqldata/devgcd; chown postgres:postgres /pgsqldata/devgcd;'
+'mkdir /pgsqldata/devgcd; chown postgres:postgres /pgsqldata/devgcd1;'
+oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
+'psql postgresql://cpadmin@localhost:5432/postgresdb \
+--file=/usr/dbscript/createGCD.sql'
+
+oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
+'mkdir /pgsqldata/devgcd; chown postgres:postgres /pgsqldata/devgcd2;'
 oc --namespace fncm-postgresql exec statefulset/postgresql -- /bin/bash -c \
 'psql postgresql://cpadmin@localhost:5432/postgresdb \
 --file=/usr/dbscript/createGCD.sql'
